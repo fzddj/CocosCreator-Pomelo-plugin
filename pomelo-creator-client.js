@@ -1158,6 +1158,7 @@
   var EventEmitter = window.EventEmitter;
   var rsa = window.rsa;
   var disconnectCb = null;
+  var maxReconnectAttempts = 0;
 
   if(typeof(window) != "undefined" && typeof(sys) != 'undefined' && sys.localStorage) {
     window.localStorage = sys.localStorage;
@@ -1291,7 +1292,7 @@
     console.log('connect to ' + url);
 
     var params = params || {};
-    var maxReconnectAttempts = params.maxReconnectAttempts || DEFAULT_MAX_RECONNECT_ATTEMPTS;
+    maxReconnectAttempts = params.maxReconnectAttempts || DEFAULT_MAX_RECONNECT_ATTEMPTS;
     reconnectUrl = url;
     //Add protobuf version
     if(window.localStorage && window.localStorage.getItem('protos') && protoVersion === 0) {
@@ -1357,6 +1358,7 @@
 
   pomelo.disconnect = function(cb) {
     disconnectCb = cb;
+    reconnectAttempts = maxReconnectAttempts;
     if(socket) {
       if(socket.disconnect) socket.disconnect();
       if(socket.close) socket.close();
