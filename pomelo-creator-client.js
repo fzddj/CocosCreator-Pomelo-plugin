@@ -1364,6 +1364,9 @@
       if(socket.close) socket.close();
       console.log('disconnect');
       socket = null;
+    } else {
+      disconnectCb && disconnectCb();
+      disconnectCb = null;
     }
 
     if(heartbeatId) {
