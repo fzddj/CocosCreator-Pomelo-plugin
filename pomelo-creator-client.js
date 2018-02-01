@@ -1289,7 +1289,6 @@
   };
 
   var connect = function(params, url, cb) {
-    console.log('connect to ' + url);
 
     var params = params || {};
     maxReconnectAttempts = params.maxReconnectAttempts || DEFAULT_MAX_RECONNECT_ATTEMPTS;
@@ -1357,13 +1356,15 @@
   };
 
   pomelo.disconnect = function(cb) {
-    disconnectCb = cb;
-    reconnectAttempts = maxReconnectAttempts;
+    var needCb = false;
     if(socket) {
+      disconnectCb = cb;
+      reconnectAttempts = maxReconnectAttempts;
       if(socket.disconnect) socket.disconnect();
       if(socket.close) socket.close();
-      console.log('disconnect');
       socket = null;
+    } else {
+      needCb = true;
     }
 
     if(heartbeatId) {
@@ -1373,6 +1374,10 @@
     if(heartbeatTimeoutId) {
       clearTimeout(heartbeatTimeoutId);
       heartbeatTimeoutId = null;
+    }
+
+    if (needCb) {
+      cb && cb();
     }
   };
 
